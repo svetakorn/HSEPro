@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HSEPro | Авторизация</title>
+    <link  href="<?php echo $BASE; ?>/ui/images/owl.png" rel="icon">
+    <link href="ui/css/bootstrap.min.css" rel="stylesheet">
+    <link href="ui/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="ui/css/animate.css" rel="stylesheet">
+    <link href="ui/css/style.css" rel="stylesheet">
+    
+    <!-- Toastr style -->
+    <link href="ui/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+        <div>
+            <div>
+
+                <h1 class="logo-name">PRO+</h1>
+
+            </div>
+            <h3>Добро пожаловать в HSEPro</h3>
+            <p>Поисковая система для хранения и обработки студенческих работ
+            </p>
+            <p>Авторизация</p>
+            <form id="login-form" class="m-t" role="form" >
+                <div class="form-group">
+                    <input type="text" class="form-control" name='login' placeholder="Логин" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" placeholder="Пароль" required>
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b">Авторизация</button>
+
+                <a href="/forgot"><small>Забыли пароль?</small></a>
+                <p class="text-muted text-center"><small>Нет аккаунта?</small></p>
+                <a class="btn btn-sm btn-white btn-block" href="/register">Создать аккаунт</a>
+            </form>
+            <p class="m-t"> <small>Разработано в НИУ ВШЭ &copy; 2017</small> </p>
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="ui/js/jquery-2.1.1.js"></script>
+    <script src="ui/js/bootstrap.min.js"></script>
+    
+    <!-- Toastr script -->
+    <script src="ui/js/plugins/toastr/toastr.min.js"></script>
+    <script src="ui/js/app.js"></script>
+    
+    <script>
+    $(document).ready(function(){
+            
+            
+            $('#login-form').on('submit', function (e){
+	            e.preventDefault();
+	            var data = $( this ).serialize();
+	            
+	            var post = $.post('/auth', data, function (response){
+	            	
+		            	App.showError(response)
+		            
+		        	
+	            });
+	            post.fail(function (){
+		            toastr.error('Ошибка при отправке запроса','Обратитесь в администратору');    
+		        });
+            });
+        });
+
+    </script>
+	
+
+</body>
+
+</html>

@@ -1,0 +1,218 @@
+    <link href="{{@BASE}}/ui/css/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="{{@BASE}}/ui/css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+    <link href="{{@BASE}}/ui/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        .modal-backdrop {
+            display: none!important;
+        }
+    </style>
+    <!-- Sweet alert -->
+    <link rel="stylesheet" type="text/css" href="{{@BASE}}/ui/css/plugins/sweetalert/sweetalert.css">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1">Студенческая работа</a></li>
+
+
+
+
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+
+
+                           <input type="text" name="id" hidden value="{{@stInfo['id']}}">
+                           <input type="text" name="fullname" hidden value="{{@stInfo['fullname']}}">
+                           <input type="text" name="year" hidden value="{{@stInfo['year']}}">
+                           <input type="text" name="program" hidden value="{{@stInfo['program']}}">
+
+
+
+                           <form class="form-horizontal m-t-md" method="post" id="formhomework" enctype="multipart/form-data" >
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Почта преподавателя*</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name='email' id='email' placeholder="...@hse.ru" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Дисциплина*</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name='subject' id='subject' required>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Описание*</label>
+                                <div class="col-sm-6">
+
+
+                                    <textarea class="form-control" name="text" style="height: 120px; resize:vertical;"></textarea>
+
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Приложение*</label>
+                                <div class="col-sm-6">
+                                    <input type="hidden" name="MAX_FILE_SIZE" value="83886080" />
+                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                        <span class="btn btn-default btn-file"><span class="fileinput-new">Выберите файл</span><span class="fileinput-exists">Изменить</span><input type="file" name="fileToUpload" id="fileToUpload" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, text/plain, application/pdf, image/*"></span>
+                                        <span class="fileinput-filename"></span>
+                                        <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+                                    </div> 
+
+
+                                    <p class="help-block m-b-none m-t-sm">Загрузить можно ровно 1 файл<br/>Поля со звездочкой (*) обязательны для заполнения</p>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-6">
+                                    <button type="button" class="ladda-button btn btn-primary btn-block"  data-style=" zoom-in">Сохранить</button></td>
+                                </div>
+                            </div>
+
+
+
+
+
+
+
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<!-- summernote -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>      
+<!-- Sweet alert -->
+<script src="{{@BASE}}/ui/js/plugins/sweetalert/sweetalert.min.js"></script>
+<!-- Toastr script -->
+<script src="{{ @BASE }}/ui/js/plugins/toastr/toastr.min.js"></script>
+<script src="{{@BASE}}/ui/js/plugins/ladda/spin.min.js"></script>
+<script src="{{@BASE}}/ui/js/plugins/ladda/ladda.min.js"></script>
+<script src="{{@BASE}}/ui/js/plugins/ladda/ladda.jquery.min.js"></script>
+<script src="{{@BASE}}/ui//js/plugins/jasny/jasny-bootstrap.min.js"></script>
+<script src="{{@BASE}}/ui/js/plugins/elasticsearch/elasticsearch.js"></script>
+<script>
+
+    $(document).ready(function(){
+
+        $( '.ladda-button' ).on("click", function(){
+            var l = $(this).ladda();
+
+
+                  // Start loading
+                  l.ladda( 'start' );
+                  var formData = new FormData($("#formhomework").get(0));
+                  formData.append("text", document.getElementsByName("text")[0].value);
+                  formData.append("email", document.getElementsByName("email")[0].value);
+                  formData.append("subject", document.getElementsByName("subject")[0].value);
+                  
+                  var file = $("#fileToUpload")[0].files[0];
+
+                  if((document.getElementsByName("fileToUpload")[0].value == '') || (document.getElementsByName("text")[0].value == '') || 
+                    (document.getElementsByName("email")[0].value == '') || (document.getElementsByName("subject")[0].value == '')){
+                    l.ladda('stop');
+                toastr.warning('<strong>Не все поля заполнены:</strong><br/><br/>1) укажите почту преподавателя<br/>2) впишите название дисциплины<br/>3) прикрепите файл<br/>4) добавьте описание');  
+            }
+
+            else{
+                $.ajax({
+                    url: "/uploadhomework",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    cache: false,
+                    contentType: false,
+                    success: function(response){
+                        if (response != 708) {$('#formhomework')[0].reset();}
+                        l.ladda('stop');
+                        App.showError(response); 
+
+                        //check for images
+                        var fileType = file["type"];
+                       
+                        console.log(fileType);
+                        console.log(fileType.split('/')[0] != "image");
+                        if (fileType.split('/')[0] != "image") {           
+
+                            $.ajax({
+                              url: "/getforelastic",
+                              success: function(data){
+                                var obj = JSON.parse(data);
+
+                                client = new elasticsearch.Client({
+                                    host: 'https://elastic:xkzw2PQEqHHYZszlKSpQPYne@99e05075fa8fd2eadf169fa6bd09cf34.eu-west-1.aws.found.io:9243'
+                                });
+
+                                index = 'homeworks';
+                                type = 'docs'; 
+                                var reader = new FileReader();
+                                reader.readAsDataURL(file);
+                                reader.onload = function(e) {
+
+                                    client.index({
+                                        index: index,
+                                        type: type,
+                                        body: {
+                                            filename: obj['filename'],
+                                            content: e.target.result.substr(event.target.result.indexOf(',') + 1),
+                                            teacher_id: obj['id_user'],
+                                            student_id: document.getElementsByName("id")[0].value,
+                                            teacher_name: obj['fullname'],
+                                            student_name: document.getElementsByName("fullname")[0].value,
+                                            subject: obj['subject'],
+                                            year: document.getElementsByName("year")[0].value,
+                                            program: document.getElementsByName("program")[0].value,
+                                            url: obj['route']
+                                        }
+                                    });
+                                };
+
+
+
+                            }
+                        });
+
+                        }   
+                    },
+                    error: function(response){
+                        $('#formhomework')[0].reset();
+                        l.ladda('stop');
+
+                        toastr.warning('Домашнее задание не загружено<br/>Обратитесь к администратору'); 
+
+                    }
+                });  
+            };
+
+
+
+
+        });
+});
+
+</script>

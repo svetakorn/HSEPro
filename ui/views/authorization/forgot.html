@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HSEPro | Восстановление</title>
+    <link  href="{{ @BASE }}/ui/images/owl.png" rel="icon">
+    <link href="ui/css/bootstrap.min.css" rel="stylesheet">
+    <link href="ui/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="ui/css/animate.css" rel="stylesheet">
+    <link href="ui/css/style.css" rel="stylesheet">
+    
+    <!-- Toastr style -->
+    <link href="ui/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="passwordBox animated fadeInDown text-center">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="ibox-content">
+
+                    <h2 class="font-bold" style="text-align: center;">Восстановление пароля</h2>
+
+                    <p style="text-align: center;">
+                       Введите свой корпоративный адрес<br/>(<strong>@hse.ru или @edu.hse.ru</strong>)<br/><br/>На него прийдут дальнейшие инструкции по восстановлению пароля в течение нескольких минут
+                    </p>
+
+                    <div class="row">
+
+                        <div class="col-lg-12">
+                            <form id="forgot-form" class="m-t" role="form">
+                                <div class="form-group">
+                                    <input type="email" name="email" class="form-control" placeholder="Корпоративная почта" required>
+                                </div>
+
+                                <button href type="submit" class="btn btn-primary block full-width m-b">Отправить письмо</button>
+                                 <a href="/login""><small>Назад</small></a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="ui/js/jquery-2.1.1.js"></script>
+    <script src="ui/js/bootstrap.min.js"></script>
+    
+        
+    <!-- Toastr script -->
+    <script src="ui/js/plugins/toastr/toastr.min.js"></script>
+    <script src="ui/js/app.js"></script>
+    <script>
+    $(document).ready(function(){
+           
+            
+            $('#forgot-form').on('submit', function (e){
+	            e.preventDefault();
+	            var data = $( this ).serialize();
+	            //toastr.warning('Письмо успешно отправлено!');
+
+	            var post = $.post('/forgot', data, function (response){
+
+	            	    alert(response);
+		            	App.showError(response)
+                        setTimeout(function() { $(location).attr('href', '/login'); }, 2000);
+		            	
+		        	
+	            });
+	            post.fail(function (response){
+                    alert(response.responseText);
+		            toastr.error('Ошибка при отправке запроса','Обратитесь в администратору');    
+		        });
+
+
+
+                
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

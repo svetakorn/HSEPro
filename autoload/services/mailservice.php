@@ -23,7 +23,7 @@ class mailservice{
 		$mail->SMTPAuth   = true;             		
 		$mail->Port       = 465;                  
 		$mail->Username   = "hsepro.server@yandex.ru"; 
-		$mail->Password   = "hsepro2017"; 
+		$mail->Password   = "password"; //not real 
 		$mail->CharSet = 'UTF-8';
 		$mail->SetFrom('hsepro.server@yandex.ru', 'Сервис HSEPro+'); 
 				
